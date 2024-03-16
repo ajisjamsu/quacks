@@ -26,6 +26,7 @@ classifiers = [
 dependencies = [
   matplotlib,
   numpy,
+  pyqt6
   flask,
   jinja2
 ]

@@ -27,7 +27,7 @@ class QuacksChip:
             return f"bomb {self.value}-chip"
         else:
             # TODO: colors of chip
-            return f"benign {self.value}chip"
+            return f"benign {self.value}-chip"
 
 
 class QuacksBag:
@@ -91,6 +91,7 @@ class QuacksPlayer:
         self.name = player_name
         self.bag = QuacksBag()
         self.pot = QuacksPot()
+        self.unexploded = True
 
     def drawChip(self):
         '''
@@ -100,9 +101,9 @@ class QuacksPlayer:
                 False if the player cannot (out of chips/exploded)
         '''
         chip = self.bag.draw()
-        bag_not_exploded = self.pot.place(chip)
+        self.unexploded = self.pot.place(chip)
         self.status(chip)
-        return (len(self.bag.chips) > 0 and bag_not_exploded)
+        return (len(self.bag.chips) > 0 and self.unexploded)
 
     def ex_chance(self):
         # Calculate explosion chance for next roll
@@ -116,7 +117,8 @@ class QuacksPlayer:
     def status(self, chip=None):
         if chip:
             logger.info(f" Just drew a {chip}!")
-        logger.info(f" {self.name}'s pot progress: {self.pot.pot_count} spaces")
+        exp_status = "" if self.unexploded else "(EXPLODED)"
+        logger.info(f" {self.name}'s pot progress: {self.pot.pot_count} spaces {exp_status}")
         logger.info(f" Bomb count: {self.pot.bomb_count}/{self.pot.limit}")
         logger.info(f" Explosion chance: {round(self.ex_chance()*100, 2)}%")
         self.bag.status()
